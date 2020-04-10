@@ -1,0 +1,28 @@
+{
+    "name": "jc-it/yii2-model-magic",
+    "description": "Some helper classes to work with models for forms and search.",
+    "type": "library",
+    "require": {
+        "php": ">=7.1.0",
+
+        "yiisoft/yii2": "~2.0.19"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Joey Claessen",
+            "email": "joey_claessen@hotmail.com"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "JCIT\\": ["src/"]
+        }
+    }
+}
