@@ -3,11 +3,13 @@
 namespace JCIT\models\search;
 
 use Closure;
+use JCIT\components\dataProviders\FilteredActiveDataProvider;
 use JCIT\models\Search;
 use yii\base\InvalidArgumentException;
 use yii\base\InvalidConfigException;
 use yii\data\DataProviderInterface;
 use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 
 /**
