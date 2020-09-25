@@ -25,6 +25,11 @@ abstract class ActiveForm extends Form
     protected $model;
 
     /**
+     * @var bool
+     */
+    protected $safeOnly = true;
+
+    /**
      * ActiveForm constructor.
      * @param ActiveRecord $model
      * @param array $config
@@ -126,7 +131,7 @@ abstract class ActiveForm extends Form
      */
     protected function runInternalModel(): bool
     {
-        $this->model->setAttributes($this->getDataAttributes());
+        $this->model->setAttributes($this->getDataAttributes(), $this->safeOnly);
         return $this->model->save();
     }
 }
