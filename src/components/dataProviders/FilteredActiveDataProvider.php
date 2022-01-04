@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace JCIT\components\dataProviders;
 
@@ -14,48 +15,25 @@ use function iter\toArray;
 
 /**
  * DataProvider that filters the records the user is allowed to see
- *
- * Class FilteredActiveDataProvider
  */
 class FilteredActiveDataProvider extends ActiveDataProvider
 {
-    /**
-     * @var int
-     */
-    public $batchSize = 100;
+    public int $batchSize = 100;
+    public Closure $filter;
+    public Closure $totalCount;
 
-    /**
-     * @var  Closure
-     */
-    public $filter;
-
-    /**
-     * @var  Closure
-     */
-    public $totalCount;
-
-    /**
-     * @return iterable
-     */
     public function each(): iterable
     {
         $query = clone $this->query;
         return $this->filter($query->each());
     }
 
-    /**
-     * @param iterable $iterable
-     * @return iterable|Iterator
-     */
-    protected function filter(iterable $iterable)
+    protected function filter(iterable $iterable): iterable
     {
         return isset($this->filter) ? filter($this->filter, $iterable) : $iterable;
     }
 
-    /**
-     * @return array
-     */
-    protected function prepareModels()
+    protected function prepareModels(): array
     {
         if (!$this->query instanceof QueryInterface) {
             throw new InvalidConfigException('The "query" property must be an instance of a class that implements the QueryInterface e.g. yii\db\Query or its subclasses.');
@@ -79,9 +57,6 @@ class FilteredActiveDataProvider extends ActiveDataProvider
         return toArray($this->filter($query->each($this->batchSize, $this->db)));
     }
 
-    /**
-     * @return int
-     */
     protected function prepareTotalCount(): int
     {
         $query = clone $this->query;

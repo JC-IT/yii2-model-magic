@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace JCIT\models\search;
 
@@ -8,57 +9,28 @@ use JCIT\models\Search;
 use yii\base\InvalidArgumentException;
 use yii\base\InvalidConfigException;
 use yii\data\DataProviderInterface;
+use yii\data\Pagination;
+use yii\data\Sort;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 
-/**
- * Class ActiveSearch
- * @package JCIT\models\search
- */
 abstract class ActiveSearch extends Search
 {
-    /**
-     * @var string
-     */
-    protected $baseModelClass;
-
-    /**
-     * @var Closure|null
-     */
-    protected $filter = null;
-
-    /**
-     * @var array
-     */
-    protected $pagination = [
+    protected string $baseModelClass;
+    protected Closure|null $filter = null;
+    protected Pagination|array $pagination = [
         'pageSize' => 10,
     ];
+    protected Sort|array $sort = [];
 
-    /**
-     * @var ActiveQuery
-     */
-    protected $query;
-
-    /**
-     * @var array
-     */
-    protected $sort = [];
-
-    /**
-     * ActiveSearch constructor.
-     * @param ActiveQuery $query
-     * @param array $config
-     */
-    public function __construct(ActiveQuery $query, $config = [])
-    {
-        $this->query = $query;
+    public function __construct(
+        protected ActiveQuery $query,
+        $config = []
+    ) {
         parent::__construct($config);
     }
 
-    /**
-     * @return array
-     */
     public function attributeLabels(): array
     {
         $modelClass = $this->query->modelClass;
@@ -72,12 +44,15 @@ abstract class ActiveSearch extends Search
     {
         parent::init();
 
-        $this->performChecks();
+        if (!isset($this->baseModelClass) || !is_subclass_of($this->baseModelClass, ActiveRecord::class)) {
+            throw new InvalidConfigException('BaseModelClass must be set and must be subclass of ' . ActiveRecord::class);
+        }
+
+        if (!is_subclass_of($this->query->modelClass, $this->baseModelClass) && $this->query->modelClass !== $this->baseModelClass) {
+            throw new InvalidArgumentException('ModelClass of query must be subclass of ' . $this->baseModelClass);
+        }
     }
 
-    /**
-     * @return DataProviderInterface
-     */
     protected function getBaseDataProvider(): DataProviderInterface
     {
         return \Yii::createObject(FilteredActiveDataProvider::class, [[
@@ -88,10 +63,6 @@ abstract class ActiveSearch extends Search
         ]]);
     }
 
-    /**
-     * @param DataProviderInterface $dataProvider
-     * @return DataProviderInterface
-     */
     protected function internalSearch(DataProviderInterface $dataProvider): DataProviderInterface
     {
         $query = $dataProvider->query;
@@ -99,22 +70,6 @@ abstract class ActiveSearch extends Search
         return $dataProvider;
     }
 
-    /**
-     * @param ActiveQuery $query
-     */
     abstract protected function internalSearchQuery(ActiveQuery $query): void;
 
-    /**
-     * @throws InvalidConfigException
-     */
-    protected function performChecks(): void
-    {
-        if (!isset($this->baseModelClass) || !is_subclass_of($this->baseModelClass, ActiveRecord::class)) {
-            throw new InvalidConfigException('BaseModelClass must be set and must be subclass of ' . ActiveRecord::class);
-        }
-
-        if (!is_subclass_of($this->query->modelClass, $this->baseModelClass) && $this->query->modelClass !== $this->baseModelClass) {
-            throw new InvalidArgumentException('ModelClass of query must be subclass of ' . $this->baseModelClass);
-        }
-    }
 }

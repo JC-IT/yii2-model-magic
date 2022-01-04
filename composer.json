@@ -3,7 +3,7 @@
     "description": "Some helper classes to work with models for forms and search.",
     "type": "library",
     "require": {
-        "php": ">=7.1.0",
+        "php": ">=8.0.0",
 
         "yiisoft/yii2": "~2.0.19"
     },

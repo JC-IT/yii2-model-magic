@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace JCIT\models\form;
 
@@ -8,41 +9,18 @@ use yii\base\InvalidConfigException;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 
-/**
- * Class ActiveForm
- * @package common\models\form
- */
 abstract class ActiveForm extends Form
 {
-    /**
-     * @var string
-     */
-    protected $baseModelClass;
+    protected string $baseModelClass;
+    protected bool $safeOnly = true;
 
-    /**
-     * @var ActiveRecord
-     */
-    protected $model;
-
-    /**
-     * @var bool
-     */
-    protected $safeOnly = true;
-
-    /**
-     * ActiveForm constructor.
-     * @param ActiveRecord $model
-     * @param array $config
-     */
-    public function __construct(ActiveRecord $model, $config = [])
-    {
-        $this->model = $model;
+    public function __construct(
+        protected ActiveRecord $model,
+        $config = [],
+    ) {
         parent::__construct($config);
     }
 
-    /**
-     * @return array
-     */
     public function attributeHints(): array
     {
         return ArrayHelper::merge(
@@ -51,9 +29,6 @@ abstract class ActiveForm extends Form
         );
     }
 
-    /**
-     * @return array
-     */
     public function attributeLabels(): array
     {
         return ArrayHelper::merge(
@@ -79,17 +54,12 @@ abstract class ActiveForm extends Form
 
     /**
      * Must return the data attributes from this form model that must be loaded into the active record model
-     *
-     * @return array
      */
     protected function getDataAttributes(): array
     {
         return $this->attributes;
     }
 
-    /**
-     * @return ActiveRecord
-     */
     public function getModel(): ActiveRecord
     {
         return $this->model;
@@ -101,9 +71,6 @@ abstract class ActiveForm extends Form
         $this->setAttributes($values, false);
     }
 
-    /**
-     * @return bool
-     */
     protected function runInternal(): bool
     {
         if ($result = $this->validate()) {
@@ -126,9 +93,6 @@ abstract class ActiveForm extends Form
         return $result;
     }
 
-    /**
-     * @return bool
-     */
     protected function runInternalModel(): bool
     {
         $this->model->setAttributes($this->getDataAttributes(), $this->safeOnly);

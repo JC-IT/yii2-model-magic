@@ -1,47 +1,26 @@
 <?php
+declare(strict_types=1);
 
 namespace JCIT\models\form;
 
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 
-/**
- * Class SteppedActiveForm
- * @package JCIT\models\form
- */
 abstract class SteppedActiveForm extends ActiveForm
 {
-    /**
-     * @var int
-     */
-    public $currentStep = 0;
+    public int $currentStep = 0;
+    public array $data = [];
 
-    /**
-     * @var array
-     */
-    public $data = [];
-
-    /**
-     * @param string $scenario
-     * @param int|null $step
-     * @return string
-     */
     public function calculateScenario(string $scenario, int $step = null): string
     {
         return $scenario . ($step ?? $this->currentStep);
     }
 
-    /**
-     * @return array
-     */
     public function getCurrentStepAttributes(): array
     {
         return $this->steps()[$this->currentStep];
     }
 
-    /**
-     * @return string
-     */
     public function getJsonData(): string
     {
         $data = $this->data;
@@ -49,10 +28,6 @@ abstract class SteppedActiveForm extends ActiveForm
         return \Yii::$app->security->hashData(Json::encode($data), \Yii::$app->request->cookieValidationKey);
     }
 
-    /**
-     * @param int|null $step
-     * @return array
-     */
     public function getStepAttributes(int $step = null): array
     {
         $steps = $this->steps();
@@ -64,20 +39,12 @@ abstract class SteppedActiveForm extends ActiveForm
         return $steps[$this->scenario][$step ?? $this->currentStep];
     }
 
-    /**
-     * @param string $attribute
-     * @return bool
-     */
-    public function isAttributeActiveInStep($attribute): bool
+    public function isAttributeActiveInStep(string $attribute): bool
     {
         return in_array($attribute, $this->getStepAttributes());
     }
 
-    /**
-     * @param string $attribute
-     * @return bool
-     */
-    public function isAttributeVisibleInStep($attribute): bool
+    public function isAttributeVisibleInStep(string $attribute): bool
     {
         $attributesSoFar = [];
         for ($i = 0; $i <= $this->currentStep; $i++) {
@@ -86,9 +53,6 @@ abstract class SteppedActiveForm extends ActiveForm
         return in_array($attribute, $attributesSoFar);
     }
 
-    /**
-     * @return bool
-     */
     public function isLastStep(): bool
     {
         return $this->currentStep === count($this->steps());
@@ -116,9 +80,6 @@ abstract class SteppedActiveForm extends ActiveForm
         return $result;
     }
 
-    /**
-     * @return bool
-     */
     protected function runInternal(): bool
     {
         $this->scenario .= $this->currentStep;
@@ -136,9 +97,6 @@ abstract class SteppedActiveForm extends ActiveForm
         return $result;
     }
 
-    /**
-     * @return array
-     */
     public function scenarios(): array
     {
         $result = [];
@@ -156,9 +114,6 @@ abstract class SteppedActiveForm extends ActiveForm
         return $result;
     }
 
-    /**
-     * @param string $data
-     */
     public function setJsonData(string $data): void
     {
         $validatedData = \Yii::$app->security->validateData($data, \Yii::$app->request->cookieValidationKey);
