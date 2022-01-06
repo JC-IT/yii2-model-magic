@@ -62,7 +62,7 @@ class FilteredActiveDataProvider extends ActiveDataProvider
         $query = clone $this->query;
 
         if (isset($this->filter)) {
-            return $query->count('*', $this->db);
+            return (int) $query->count('*', $this->db);
         }
 
         if (isset($this->totalCount)) {
