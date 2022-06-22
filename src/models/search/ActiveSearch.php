@@ -55,12 +55,12 @@ abstract class ActiveSearch extends Search
 
     protected function getBaseDataProvider(): DataProviderInterface
     {
-        return \Yii::createObject(FilteredActiveDataProvider::class, [[
+        return \Yii::createObject(FilteredActiveDataProvider::class, [array_filter([
             'query' => $this->query,
             'filter' => $this->filter,
             'sort' => $this->sort,
             'pagination' => $this->pagination,
-        ]]);
+        ])]);
     }
 
     protected function internalSearch(DataProviderInterface $dataProvider): DataProviderInterface
