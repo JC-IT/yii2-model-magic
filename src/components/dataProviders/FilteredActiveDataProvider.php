@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace JCIT\components\dataProviders;
@@ -35,6 +36,10 @@ class FilteredActiveDataProvider extends ActiveDataProvider
 
     protected function prepareModels(): array
     {
+        if (!isset($this->filter)) {
+            return parent::prepareModels();
+        }
+
         if (!$this->query instanceof QueryInterface) {
             throw new InvalidConfigException('The "query" property must be an instance of a class that implements the QueryInterface e.g. yii\db\Query or its subclasses.');
         }
@@ -61,12 +66,12 @@ class FilteredActiveDataProvider extends ActiveDataProvider
     {
         $query = clone $this->query;
 
-        if (isset($this->filter)) {
-            return (int) $query->count('*', $this->db);
-        }
-
         if (isset($this->totalCount)) {
             return ($this->totalCount)($query);
+        }
+
+        if (!isset($this->filter)) {
+            return (int) $query->count('*', $this->db);
         }
 
         return \iter\count($this->filter($query->each($this->batchSize, $this->db)));

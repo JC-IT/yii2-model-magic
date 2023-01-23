@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace JCIT\models\search;
@@ -23,6 +24,7 @@ abstract class ActiveSearch extends Search
         'pageSize' => 10,
     ];
     protected Sort|array $sort = [];
+    public ?Closure $totalCount = null;
 
     public function __construct(
         protected ActiveQuery $query,
@@ -60,6 +62,7 @@ abstract class ActiveSearch extends Search
             'filter' => $this->filter,
             'sort' => $this->sort,
             'pagination' => $this->pagination,
+            'totalCount' => $this->totalCount,
         ])]);
     }
 
@@ -71,5 +74,4 @@ abstract class ActiveSearch extends Search
     }
 
     abstract protected function internalSearchQuery(ActiveQuery $query): void;
-
 }

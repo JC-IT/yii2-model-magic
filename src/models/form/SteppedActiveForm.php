@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace JCIT\models\form;
@@ -65,7 +66,7 @@ abstract class SteppedActiveForm extends ActiveForm
      */
     public function load($data, $formName = null): bool
     {
-        if ($jsonData = ArrayHelper::getValue($data,  $this->formName() . '.jsonData')) {
+        if ($jsonData = ArrayHelper::getValue($data, $this->formName() . '.jsonData')) {
             $this->setJsonData($jsonData);
 
             foreach ($this->data as $attribute => $value) {
@@ -86,11 +87,11 @@ abstract class SteppedActiveForm extends ActiveForm
         if ($this->isLastStep()) {
             $result = parent::runInternal();
         } else {
-           if($result = $this->validate()) {
-               $this->storeData();
-               $this->currentStep++;
-               $result = false;
-           }
+            if ($result = $this->validate()) {
+                $this->storeData();
+                $this->currentStep++;
+                $result = false;
+            }
         }
         $this->scenario = substr($this->scenario, 0, -1);
 
