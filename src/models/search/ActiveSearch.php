@@ -21,7 +21,7 @@ abstract class ActiveSearch extends Search
     protected string $baseModelClass;
     protected Closure|null $filter = null;
     protected Pagination|array $pagination = [
-        'pageSize' => 10,
+        'defaultPageSize' => 10,
     ];
     protected Sort|array $sort = [];
     public ?Closure $totalCount = null;
